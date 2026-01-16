@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 export default function Home() {
   const [urlInput, setUrlInput] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
   const urls = useQuery(api.urls.listUrls);
   const addUrl = useMutation(api.urls.addUrl);
   const deleteUrl = useMutation(api.urls.deleteUrl);
@@ -23,7 +23,7 @@ export default function Home() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: Id<"urls">) => {
     try {
       await deleteUrl({ id });
     } catch (error) {
@@ -40,21 +40,9 @@ export default function Home() {
         <form onSubmit={handleAddUrl} className="mb-8">
           <div className="flex gap-2">
             <input
-              ref={inputRef}
               type="text"
               value={urlInput}
-              onChange={(e) => {
-                console.log("onChange:", e.target.value);
-                setUrlInput(e.target.value);
-              }}
-              onPaste={(e) => {
-                console.log("onPaste event triggered");
-                const pastedText = e.clipboardData?.getData("text/plain");
-                console.log("Pasted text:", pastedText);
-              }}
-              onInput={(e) => {
-                console.log("onInput:", e.currentTarget.value);
-              }}
+              onChange={(e) => setUrlInput(e.target.value)}
               placeholder="Enter a URL (e.g., https://example.com)"
               className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
